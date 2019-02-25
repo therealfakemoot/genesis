@@ -1,0 +1,6 @@
+github.com/ojrac/opensimplex-go v1.0.1 h1:XslvpLP6XqQSATUtsOnGBYtFPw7FQ6h6y0ihjVeOLHo=
+github.com/ojrac/opensimplex-go v1.0.1/go.mod h1:MoSgj04tZpH8U0RefZabnHV2AbLgv/2mo3hLJtWqSEs=
+github.com/therealfakemoot/genesis v0.0.0-20180918175248-1410eb293e29 h1:JkzW/HT6YnNrbCew4VTlfEeTEqk+W9BHTA1HH21VOeM=
+github.com/therealfakemoot/genesis v0.0.0-20180918175248-1410eb293e29/go.mod h1:74pBi2GuyFFNcKaLbvh+RgLRXRWYs+h3bjIic7s2e7I=
+github.com/therealfakemoot/go-quantize v0.0.0-20190219193308-434831273bda h1:aZmlng6csbuSjOpDjlisgQX249vyLR0/z2jZvRk2Tt8=
+github.com/therealfakemoot/go-quantize v0.0.0-20190219193308-434831273bda/go.mod h1:bMOfbFpiuRt34F0b+CJIsEKTfHlLIme5vMCTJvYvETU=
