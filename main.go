@@ -15,6 +15,7 @@ import (
 )
 
 type Map struct {
+	Domain Q.Domain
 	Width  int
 	Height int
 	Points [][]float64
@@ -54,12 +55,25 @@ func ServePNG(w http.ResponseWriter, r *http.Request) {
 	w.Write(buffer.Bytes())
 }
 
+func matchColor(point float64, d Q.Domain) (c color.Color) {
+	colorSpace := Q.Domain{
+		Min:  0,
+		Max:  255,
+		Step: 1,
+	}
+	normalized := uint8(colorSpace.QuantizePoint(point))
+
+	return color.NRGBA{normalized, normalized, normalized, 255}
+}
+
 func GeneratePNG(m Map) image.Image {
 	img := image.NewNRGBA(image.Rect(0, 0, m.Width, m.Height))
 
 	for y := 0; y < m.Height; y++ {
 		for x := 0; x < m.Width; x++ {
-			img.Set(x, y, color.NRGBA{0, 0, 0, 255})
+			point := m.Points[x][y]
+			c := matchColor(point, m.Domain)
+			img.Set(x, y, c)
 		}
 	}
 
