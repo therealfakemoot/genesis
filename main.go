@@ -2,16 +2,16 @@ package main
 
 import (
 	"bytes"
-	"log"
-	"net/http"
-	"strconv"
-
 	"image"
 	"image/color"
 	"image/png"
+	"net/http"
+	"strconv"
 
 	noise "github.com/ojrac/opensimplex-go"
 	Q "github.com/therealfakemoot/go-quantize"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Map struct {
@@ -29,39 +29,49 @@ func ServePNG(w http.ResponseWriter, r *http.Request) {
 	min, _ := strconv.ParseInt(values.Get("min"), 10, 0)
 	max, _ := strconv.ParseInt(values.Get("max"), 10, 0)
 
-	log.Printf("seed: %d", seed)
-	log.Printf("width: %d", width)
-	log.Printf("height: %d", height)
-	log.Printf("min: %d", min)
-	log.Printf("max: %d", max)
+	log.WithFields(log.Fields{
+		"seed":   seed,
+		"width":  width,
+		"height": height,
+		"min":    min,
+		"max":    max,
+	}).Info("serving png")
 
 	d := Q.Domain{
-		Max:  float64(max),
-		Min:  float64(min),
-		Step: 1,
+		Max: float64(max),
+		Min: float64(min),
 	}
 
-	m := GenerateMap(500, 500, 18006665432, d)
+	m := GenerateMap(int(width), int(height), int(seed), d)
+	m.Domain = d
 	i := GeneratePNG(m)
 
 	buffer := new(bytes.Buffer)
 
 	w.Header().Set("Content-type", "image/png")
 	err := png.Encode(buffer, i)
-	w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
 	if err != nil {
-		log.Fatal(err)
+		log.WithError(err).Error("image encoding failure")
 	}
-	w.Write(buffer.Bytes())
+
+	w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
+	_, err = w.Write(buffer.Bytes())
+	if err != nil {
+		log.WithError(err).Error("response write failure")
+	}
 }
 
 func matchColor(point float64, d Q.Domain) (c color.Color) {
 	colorSpace := Q.Domain{
-		Min:  0,
-		Max:  255,
-		Step: 1,
+		Min: 0,
+		Max: 255,
 	}
-	normalized := uint8(colorSpace.QuantizePoint(point))
+	// normalized := uint8(colorSpace.QuantizePoint(point))
+	normalized := uint8(Q.Quantize(point, d, colorSpace))
+	log.WithFields(log.Fields{
+		"point": point,
+		"color": normalized,
+	}).Info("matching color")
 
 	return color.NRGBA{normalized, normalized, normalized, 255}
 }
@@ -85,16 +95,17 @@ func GenerateMap(x, y, seed int, d Q.Domain) (m Map) {
 	m.Width = x
 	m.Height = y
 
+	input := Q.Domain{Min: -1, Max: 1}
 	n := noise.New(int64(seed))
 
-	for yGen := 0; yGen < y; yGen++ {
+	for i := 0; i < y; i++ {
 		row := make([]float64, x)
-		for xGen := 0; xGen < x; xGen++ {
-			row[xGen] = n.Eval2(float64(xGen*2), float64(yGen*2))
+		for j := 0; j < x; j++ {
+			row[j] = n.Eval2(float64(j), float64(i))
 		}
-		quantized := d.Quantize(row)
+		quantized := Q.QuantizeAll(row, input, d)
 
-		m.Points[yGen] = quantized
+		m.Points[i] = quantized
 	}
 
 	return m
