@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/json"
 	"image"
 	"image/color"
 	"image/png"
@@ -20,14 +21,50 @@ type Map struct {
 	Height int
 	Points [][]float64
 }
+type parseError struct {
+	Param string
+	Error string
+}
 
 func ServePNG(w http.ResponseWriter, r *http.Request) {
+	var errors []parseError
+
 	values := r.URL.Query()
-	width, _ := strconv.ParseInt(values.Get("width"), 10, 0)
-	height, _ := strconv.ParseInt(values.Get("height"), 10, 0)
-	seed, _ := strconv.ParseInt(values.Get("seed"), 10, 0)
-	min, _ := strconv.ParseInt(values.Get("min"), 10, 0)
-	max, _ := strconv.ParseInt(values.Get("max"), 10, 0)
+	width, err := strconv.ParseInt(values.Get("width"), 10, 0)
+	if err != nil {
+		errors = append(errors, parseError{"width", err.Error()})
+	}
+	height, err := strconv.ParseInt(values.Get("height"), 10, 0)
+	if err != nil {
+		errors = append(errors, parseError{"height", err.Error()})
+	}
+	seed, err := strconv.ParseInt(values.Get("seed"), 10, 0)
+	if err != nil {
+		errors = append(errors, parseError{"seed", err.Error()})
+	}
+	min, err := strconv.ParseInt(values.Get("min"), 10, 0)
+	if err != nil {
+		errors = append(errors, parseError{"min", err.Error()})
+	}
+	max, err := strconv.ParseInt(values.Get("max"), 10, 0)
+	if err != nil {
+		errors = append(errors, parseError{"max", err.Error()})
+	}
+
+	if len(errors) > 0 {
+		log.WithFields(log.Fields{
+			"errors": errors,
+		}).Error("parsing parameters failed")
+
+		e := struct {
+			Errors []parseError
+		}{errors}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode(e)
+		return
+	}
 
 	log.WithFields(log.Fields{
 		"seed":   seed,
@@ -49,9 +86,17 @@ func ServePNG(w http.ResponseWriter, r *http.Request) {
 	buffer := new(bytes.Buffer)
 
 	w.Header().Set("Content-type", "image/png")
-	err := png.Encode(buffer, i)
+	err = png.Encode(buffer, i)
 	if err != nil {
 		log.WithError(err).Error("image encoding failure")
+
+		e := struct {
+			Error string
+		}{Error: err.Error()}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(500)
+		json.NewEncoder(w).Encode(e)
+		return
 	}
 
 	w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
@@ -71,7 +116,7 @@ func matchColor(point float64, d Q.Domain) (c color.Color) {
 	log.WithFields(log.Fields{
 		"point": point,
 		"color": normalized,
-	}).Info("matching color")
+	}).Debug("matching color")
 
 	return color.NRGBA{normalized, normalized, normalized, 255}
 }
