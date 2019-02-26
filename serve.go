@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"image/png"
 	"net/http"
 	"strconv"
@@ -10,6 +11,10 @@ import (
 	Q "github.com/therealfakemoot/go-quantize"
 
 	log "github.com/sirupsen/logrus"
+)
+
+var (
+	ErrGenerateParamsParse = errors.New("")
 )
 
 type parseError struct {
