@@ -19,11 +19,11 @@ type parseError struct {
 
 func ServeJSON(w http.ResponseWriter, m Map) {
 	type mapData struct {
-		Width  int
-		Height int
-		Seed   int
-		Min    float64
-		Max    float64
+		Width  int       `json:"width"`
+		Height int       `json:"height"`
+		Seed   int       `json:"seed"`
+		Min    float64   `json:"min"`
+		Max    float64   `json:"max"`
 		Values []float64 `json:"values"`
 	}
 	var md mapData
@@ -128,6 +128,8 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 		ServePNG(w, m)
 	case "json":
 		ServeJSON(w, m)
+	case "html":
+		ServeHTML(w, m)
 	}
 
 	log.WithFields(log.Fields{
