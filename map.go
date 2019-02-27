@@ -1,10 +1,13 @@
 package main
 
 import (
+	noise "github.com/ojrac/opensimplex-go"
+
 	Q "github.com/therealfakemoot/go-quantize"
 )
 
 type Map struct {
+	Seed   int
 	Domain Q.Domain
 	Width  int
 	Height int
@@ -12,6 +15,7 @@ type Map struct {
 }
 
 func GenerateMap(x, y, seed int, d Q.Domain) (m Map) {
+	m.Seed = seed
 	m.Points = make([][]float64, y)
 	m.Width = x
 	m.Height = y

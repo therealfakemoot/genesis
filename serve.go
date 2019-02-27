@@ -3,7 +3,6 @@ package main
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"image/png"
 	"net/http"
 	"strconv"
@@ -13,16 +12,66 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var (
-	ErrGenerateParamsParse = errors.New("")
-)
-
 type parseError struct {
 	Param string
 	Error string
 }
 
-func ServePNG(w http.ResponseWriter, r *http.Request) {
+func ServeJSON(w http.ResponseWriter, m Map) {
+	type mapData struct {
+		Width  int
+		Height int
+		Seed   int
+		Min    float64
+		Max    float64
+		Values []float64 `json:"values"`
+	}
+	var md mapData
+	md.Width, md.Height = m.Width, m.Height
+	md.Min, md.Max = m.Domain.Min, m.Domain.Max
+	md.Seed = m.Seed
+
+	for i := 0; i < m.Height; i++ {
+		for j := 0; j < m.Width; j++ {
+			md.Values = append(md.Values, m.Points[i][j])
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(md)
+}
+
+func ServePNG(w http.ResponseWriter, m Map) {
+	var err error
+	buffer := new(bytes.Buffer)
+
+	i := GeneratePNG(m)
+
+	w.Header().Set("Content-type", "image/png")
+
+	w.Header().Set("Content-Disposition", `inline;filename="butts"`)
+	err = png.Encode(buffer, i)
+	if err != nil {
+		log.WithError(err).Error("image encoding failure")
+
+		e := struct {
+			Error string
+		}{Error: err.Error()}
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(500)
+		json.NewEncoder(w).Encode(e)
+		return
+	}
+
+	w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
+	_, err = w.Write(buffer.Bytes())
+	if err != nil {
+		log.WithError(err).Error("response write failure")
+	}
+
+}
+
+func ServeMap(w http.ResponseWriter, r *http.Request) {
 	var errors []parseError
 
 	values := r.URL.Query()
@@ -45,6 +94,10 @@ func ServePNG(w http.ResponseWriter, r *http.Request) {
 	max, err := strconv.ParseInt(values.Get("max"), 10, 0)
 	if err != nil {
 		errors = append(errors, parseError{"max", err.Error()})
+	}
+	out := values.Get("out")
+	if out == "" {
+		out = "png"
 	}
 
 	if len(errors) > 0 {
@@ -69,30 +122,12 @@ func ServePNG(w http.ResponseWriter, r *http.Request) {
 
 	m := GenerateMap(int(width), int(height), int(seed), d)
 	m.Domain = d
-	i := GeneratePNG(m)
 
-	buffer := new(bytes.Buffer)
-
-	w.Header().Set("Content-type", "image/png")
-
-	w.Header().Set("Content-Disposition", `inline;filename="`+values.Encode()+`"`)
-	err = png.Encode(buffer, i)
-	if err != nil {
-		log.WithError(err).Error("image encoding failure")
-
-		e := struct {
-			Error string
-		}{Error: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(500)
-		json.NewEncoder(w).Encode(e)
-		return
-	}
-
-	w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
-	_, err = w.Write(buffer.Bytes())
-	if err != nil {
-		log.WithError(err).Error("response write failure")
+	switch out {
+	case "png":
+		ServePNG(w, m)
+	case "json":
+		ServeJSON(w, m)
 	}
 
 	log.WithFields(log.Fields{

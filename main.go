@@ -14,6 +14,6 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Get("/map", ServePNG)
+	r.Get("/map", ServeMap)
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
