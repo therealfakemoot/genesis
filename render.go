@@ -23,7 +23,9 @@ interpolateTerrain = function(t) { return t < 0.5 ? i0(t * 2) : i1((t - 0.5) * 2
 color = d3.scaleSequential(interpolateTerrain).domain([{{ $.Domain.Min }}, {{ $.Domain.Max }}]);
 
 d3.json("/map?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={{ $.Domain.Min }}&max={{ $.Domain.Max }}&out=json", function(error, terrain) {
-	if (error) throw error;
+	if (error) {
+		throw error;
+	}
 
 	svg.selectAll("path")
 	.data(d3.contours()

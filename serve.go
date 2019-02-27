@@ -38,7 +38,10 @@ func ServeJSON(w http.ResponseWriter, m Map) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(md)
+	err := json.NewEncoder(w).Encode(md)
+	if err != nil {
+		log.WithError(err).Error("error sending map json")
+	}
 }
 
 func ServePNG(w http.ResponseWriter, m Map) {
