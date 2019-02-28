@@ -136,10 +136,11 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.WithFields(log.Fields{
+		"target": out,
 		"seed":   seed,
 		"width":  width,
 		"height": height,
 		"min":    min,
 		"max":    max,
-	}).Info("serving png")
+	}).Info("serving map")
 }
