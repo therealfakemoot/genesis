@@ -26,7 +26,7 @@ func GenerateMap(x, y, seed int, d Q.Domain) (m Map) {
 	for i := 0; i < y; i++ {
 		row := make([]float64, x)
 		for j := 0; j < x; j++ {
-			row[j] = n.Eval2(float64(j), float64(i))
+			row[j] = n.Eval2(float64(j)*00.1, float64(i)*00.1)
 		}
 		quantized := Q.QuantizeAll(row, input, d)
 
