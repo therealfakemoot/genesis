@@ -5,13 +5,17 @@ import (
 	"log"
 	"net/http"
 
+	log "github.com/sirupsen/logrus"
+
 	geo "github.com/therealfakemoot/genesis/geo"
 )
 
-var TopoTemplate = template.Must(template.New("terrain").ParseFiles("static/topo.tpl"))
+var TopoTemplate = template.Must(template.New("topo.tpl").ParseFiles("static/topo.tpl"))
 
 func ServeHTML(w http.ResponseWriter, m geo.Map) {
 	w.Header().Set("Content-Type", "text/html")
-	log.Println(TopoTemplate)
-	TopoTemplate.Execute(w, m)
+	err := TopoTemplate.Execute(w, m)
+	if err != nil {
+		log.WithError(err).Error("template execution")
+	}
 }
