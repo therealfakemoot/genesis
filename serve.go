@@ -7,9 +7,11 @@ import (
 	"net/http"
 	"strconv"
 
-	Q "github.com/therealfakemoot/go-quantize"
-
 	log "github.com/sirupsen/logrus"
+
+	geo "github.com/therealfakemoot/genesis/geo"
+	render "github.com/therealfakemoot/genesis/render"
+	Q "github.com/therealfakemoot/go-quantize"
 )
 
 type parseError struct {
@@ -17,7 +19,7 @@ type parseError struct {
 	Error string
 }
 
-func ServeJSON(w http.ResponseWriter, m Map) {
+func ServeJSON(w http.ResponseWriter, m geo.Map) {
 	type mapData struct {
 		Width  int       `json:"width"`
 		Height int       `json:"height"`
@@ -48,11 +50,11 @@ func ServeJSON(w http.ResponseWriter, m Map) {
 	}
 }
 
-func ServePNG(w http.ResponseWriter, m Map) {
+func ServePNG(w http.ResponseWriter, m geo.Map) {
 	var err error
 	buffer := new(bytes.Buffer)
 
-	i := GeneratePNG(m)
+	i := render.GeneratePNG(m)
 
 	w.Header().Set("Content-type", "image/png")
 
@@ -127,7 +129,7 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 		Min: float64(min),
 	}
 
-	m := GenerateMap(int(width), int(height), int(seed), d)
+	m := geo.New(int(width), int(height), int(seed), d)
 	m.Domain = d
 
 	switch out {
@@ -136,7 +138,7 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 	case "json":
 		ServeJSON(w, m)
 	case "html":
-		ServeHTML(w, m)
+		render.ServeHTML(w, m)
 	}
 
 	log.WithFields(log.Fields{

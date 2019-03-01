@@ -1,9 +1,20 @@
-package main
+package render
 
 import (
+	"io"
 	"net/http"
 	"text/template"
+
+	geo "github.com/therealfakemoot/genesis/geo"
 )
+
+/*
+type Renderer interface {
+	Render(w io.Writer, m geo.Map)
+}
+*/
+
+type RenderFunc func(w io.Writer, m geo.Map)
 
 var rawTemplate = `
 <!DOCTYPE html>
@@ -50,9 +61,8 @@ d3.json("/map?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={{
 </body>
 `
 
-var TopoMap = template.Must(template.New("terrain").Parse(rawTemplate))
-
-func ServeHTML(w http.ResponseWriter, m Map) {
+func ServeHTML(w http.ResponseWriter, m geo.Map) {
+	t := template.Must(template.New("terrain").Parse(rawTemplate))
 	w.Header().Set("Content-Type", "text/html")
-	TopoMap.Execute(w, m)
+	t.Execute(w, m)
 }

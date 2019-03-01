@@ -1,4 +1,4 @@
-package main
+package geo
 
 import (
 	noise "github.com/ojrac/opensimplex-go"
@@ -14,7 +14,7 @@ type Map struct {
 	Points [][]float64
 }
 
-func GenerateMap(x, y, seed int, d Q.Domain) (m Map) {
+func New(x, y, seed int, d Q.Domain) (m Map) {
 	m.Seed = seed
 	m.Points = make([][]float64, y)
 	m.Width = x

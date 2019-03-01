@@ -1,12 +1,13 @@
-package main
+package render
 
 import (
 	"image"
 	"image/color"
 
-	Q "github.com/therealfakemoot/go-quantize"
-
 	log "github.com/sirupsen/logrus"
+
+	geo "github.com/therealfakemoot/genesis/geo"
+	Q "github.com/therealfakemoot/go-quantize"
 )
 
 func matchColor(point float64, d Q.Domain) (c color.Color) {
@@ -24,7 +25,7 @@ func matchColor(point float64, d Q.Domain) (c color.Color) {
 	return color.NRGBA{normalized, normalized, normalized, 255}
 }
 
-func GeneratePNG(m Map) image.Image {
+func GeneratePNG(m geo.Map) image.Image {
 	img := image.NewNRGBA(image.Rect(0, 0, m.Width, m.Height))
 
 	for y := 0; y < m.Height; y++ {
