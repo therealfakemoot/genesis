@@ -1,4 +1,4 @@
-module github.com/therealfakemoot/colormap
+module github.com/therealfakemoot/genesis
 
 require (
 	github.com/go-chi/chi v4.0.2+incompatible
