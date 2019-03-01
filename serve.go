@@ -33,7 +33,11 @@ func ServeJSON(w http.ResponseWriter, m Map) {
 
 	for i := 0; i < m.Height; i++ {
 		for j := 0; j < m.Width; j++ {
-			md.Values = append(md.Values, m.Points[i][j])
+			v := m.Points[i][j]
+			if v < 0.0 {
+				v = 0.0
+			}
+			md.Values = append(md.Values, v)
 		}
 	}
 
