@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
-	"image/png"
 	"net/http"
 	"strconv"
 
@@ -17,67 +15,6 @@ import (
 type parseError struct {
 	Param string
 	Error string
-}
-
-func ServeJSON(w http.ResponseWriter, m geo.Map) {
-	type mapData struct {
-		Width  int       `json:"width"`
-		Height int       `json:"height"`
-		Seed   int       `json:"seed"`
-		Min    float64   `json:"min"`
-		Max    float64   `json:"max"`
-		Values []float64 `json:"values"`
-	}
-	var md mapData
-	md.Width, md.Height = m.Width, m.Height
-	md.Min, md.Max = m.Domain.Min, m.Domain.Max
-	md.Seed = m.Seed
-
-	for i := 0; i < m.Height; i++ {
-		for j := 0; j < m.Width; j++ {
-			v := m.Points[i][j]
-			if v < 0.0 {
-				v = 0.0
-			}
-			md.Values = append(md.Values, v)
-		}
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	err := json.NewEncoder(w).Encode(md)
-	if err != nil {
-		log.WithError(err).Error("error sending map json")
-	}
-}
-
-func ServePNG(w http.ResponseWriter, m geo.Map) {
-	var err error
-	buffer := new(bytes.Buffer)
-
-	i := render.GeneratePNG(m)
-
-	w.Header().Set("Content-type", "image/png")
-
-	w.Header().Set("Content-Disposition", `inline;filename="butts"`)
-	err = png.Encode(buffer, i)
-	if err != nil {
-		log.WithError(err).Error("image encoding failure")
-
-		e := struct {
-			Error string
-		}{Error: err.Error()}
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(500)
-		json.NewEncoder(w).Encode(e)
-		return
-	}
-
-	w.Header().Set("Content-Length", strconv.Itoa(len(buffer.Bytes())))
-	_, err = w.Write(buffer.Bytes())
-	if err != nil {
-		log.WithError(err).Error("response write failure")
-	}
-
 }
 
 func ServeMap(w http.ResponseWriter, r *http.Request) {
@@ -134,9 +71,10 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 
 	switch out {
 	case "png":
-		ServePNG(w, m)
+		render.ServePNG(w, m)
 	case "json":
-		ServeJSON(w, m)
+		w.Header().Set("Content-Type", "application/json")
+		render.ServeJSON(w, m)
 	case "html":
 		render.ServeHTML(w, m)
 	}
