@@ -2,7 +2,6 @@ package render
 
 import (
 	"html/template"
-	"log"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
