@@ -2,6 +2,7 @@ package geo
 
 import (
 	noise "github.com/ojrac/opensimplex-go"
+	// log "github.com/sirupsen/logrus"
 
 	Q "github.com/therealfakemoot/go-quantize"
 )
@@ -20,13 +21,18 @@ func New(x, y, seed int, d Q.Domain) (m Map) {
 	m.Width = x
 	m.Height = y
 
-	input := Q.Domain{Min: -1, Max: 1}
+	// This is important. Adding the noise values together means the input domain grows.
+	input := Q.Domain{Min: -3, Max: 3}
 	n := noise.New(int64(seed))
 
 	for i := 0; i < y; i++ {
 		row := make([]float64, x)
 		for j := 0; j < x; j++ {
-			row[j] = n.Eval2(float64(j)*00.1, float64(i)*00.1)
+			v := n.Eval2(float64(j)*0.001, float64(i)*0.001) +
+				n.Eval2(float64(j)*0.05, float64(i)*0.05) +
+				(0.25 * n.Eval2(float64(j)*0.1, float64(i)*0.1))
+
+			row[j] = v
 		}
 		quantized := Q.QuantizeAll(row, input, d)
 
