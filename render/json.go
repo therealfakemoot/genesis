@@ -3,6 +3,7 @@ package render
 import (
 	"encoding/json"
 	"io"
+	"math"
 
 	log "github.com/sirupsen/logrus"
 
@@ -14,6 +15,7 @@ func ServeJSON(w io.Writer, m geo.Map) {
 		Width  int       `json:"width"`
 		Height int       `json:"height"`
 		Seed   int       `json:"seed"`
+		Steps  float64   `json:"steps"`
 		Min    float64   `json:"min"`
 		Max    float64   `json:"max"`
 		Values []float64 `json:"values"`
@@ -22,6 +24,7 @@ func ServeJSON(w io.Writer, m geo.Map) {
 	md.Width, md.Height = m.Width, m.Height
 	md.Min, md.Max = m.Domain.Min, m.Domain.Max
 	md.Seed = m.Seed
+	md.Steps = (math.Abs(m.Domain.Min) + math.Abs(m.Domain.Min)) / 35
 
 	for i := 0; i < m.Height; i++ {
 		for j := 0; j < m.Width; j++ {

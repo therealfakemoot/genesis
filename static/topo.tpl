@@ -25,7 +25,7 @@ d3.json("/map?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={{
 		throw error;
 	}
 
-	let thresholds = d3.range({{ $.Domain.Min }}, {{ $.Domain.Max }} + 1, 50)
+	let thresholds = d3.range({{ $.Domain.Min }}, {{ $.Domain.Max }} + 1, terrain.steps)
 
 	let contours = d3.contours()
 	.size([terrain.width, terrain.height])
