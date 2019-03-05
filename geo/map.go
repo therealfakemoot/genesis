@@ -7,11 +7,11 @@ import (
 )
 
 type Map struct {
-	Seed   int `json:"seed"`
-	Domain Q.Domain
-	Width  int `json:"width"`
-	Height int `json:"height"`
-	Points [][]float64
+	Seed   int         `json:"seed"`
+	Domain Q.Domain    `json:"domain"`
+	Width  int         `json:"width"`
+	Height int         `json:"height"`
+	Points [][]float64 `json:"points"`
 }
 
 func (m Map) Dims() (int, int) {
