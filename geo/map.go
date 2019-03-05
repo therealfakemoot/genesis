@@ -7,10 +7,10 @@ import (
 )
 
 type Map struct {
-	Seed   int
+	Seed   int `json:"seed"`
 	Domain Q.Domain
-	Width  int
-	Height int
+	Width  int `json:"width"`
+	Height int `json:"height"`
 	Points [][]float64
 }
 
