@@ -67,7 +67,6 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m := geo.New(int(width), int(height), int(seed), d)
-	m.Domain = d
 
 	switch out {
 	case "png":

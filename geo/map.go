@@ -50,6 +50,7 @@ func New(x, y, seed int, d Q.Domain) (m Map) {
 	m.Points = make([][]float64, y)
 	m.Width = x
 	m.Height = y
+	m.Domain = d
 
 	// This is important. Adding the noise values together means the input domain grows.
 	input := Q.Domain{Min: -3, Max: 3}
