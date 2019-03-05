@@ -7,7 +7,7 @@ import (
 )
 
 type NoiseOpts struct {
-	Alpha []float64
+	Alpha []float64 `json:"alpha"`
 }
 
 var (
