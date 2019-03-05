@@ -52,9 +52,17 @@ func New(x, y, seed int, d Q.Domain) (m Map) {
 	m.Height = y
 	m.Domain = d
 
+	m.Points = Noise(m)
+
+	return m
+}
+
+func Noise(m Map) (points [][]float64) {
 	// This is important. Adding the noise values together means the input domain grows.
 	input := Q.Domain{Min: -3, Max: 3}
-	n := noise.New(int64(seed))
+	n := noise.New(int64(m.Seed))
+
+	x, y := m.Width, m.Height
 
 	for i := 0; i < y; i++ {
 		row := make([]float64, x)
@@ -65,10 +73,9 @@ func New(x, y, seed int, d Q.Domain) (m Map) {
 
 			row[j] = v
 		}
-		quantized := Q.QuantizeAll(row, input, d)
+		quantized := Q.QuantizeAll(row, input, m.Domain)
 
-		m.Points[i] = quantized
+		points = append(points, quantized)
 	}
-
-	return m
+	return points
 }
