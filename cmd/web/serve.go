@@ -1,8 +1,6 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -12,30 +10,10 @@ import (
 	render "github.com/therealfakemoot/genesis/render"
 )
 
-type CtxKey string
-
-var (
-	CtxMapKey = CtxKey("map")
-)
-
-func MapCtx(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		decoder := json.NewDecoder(r.Body)
-		var m geo.Map
-		err := decoder.Decode(&m)
-		if err != nil {
-			log.WithError(err).Error("error deserializing map")
-			return
-		}
-		ctx := context.WithValue(r.Context(), CtxMapKey, m)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
-}
-
 func ServeMap(w http.ResponseWriter, r *http.Request) {
 	out := chi.URLParam(r, "target")
 
-	m := r.Context().Value(CtxMapKey).(geo.Map)
+	m := r.Context().Value(CtxMap).(geo.Map)
 
 	width, height := m.Width, m.Height
 	seed := m.Seed
