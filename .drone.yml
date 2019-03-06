@@ -8,8 +8,8 @@ steps:
   - go test -v ./...
   when:
     branch:
-      - master
-      - dev
+    - master
+    - dev
 
 - name: web
   image: golang
@@ -18,4 +18,4 @@ steps:
   - docker
   when:
     branch:
-      - master
+    - master
