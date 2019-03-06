@@ -2,20 +2,20 @@ kind: pipeline
 name: default
 
 steps:
-  - name: test
-    image: golang
-    commands:
-      - go test -v ./...
-      when:
-        branch:
-          - master
-          - dev
+- name: test
+  image: golang
+  commands:
+  - go test -v ./...
+  when:
+    branch:
+      - master
+      - dev
 
-  - name: web
-    image: golang
-    commands:
-      - docker build .
-      - docker
-      when:
-        branch:
-          - master
+- name: web
+  image: golang
+  commands:
+  - docker build .
+  - docker
+  when:
+    branch:
+      - master
