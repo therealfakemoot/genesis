@@ -1,72 +1,56 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
-	"strconv"
 
+	"github.com/go-chi/chi"
 	log "github.com/sirupsen/logrus"
 
 	geo "github.com/therealfakemoot/genesis/geo"
 	render "github.com/therealfakemoot/genesis/render"
-	Q "github.com/therealfakemoot/go-quantize"
 )
 
-type parseError struct {
-	Param string
-	Error string
+type CtxKey string
+
+var (
+	CtxMapKey = CtxKey("map")
+)
+
+func MapCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		decoder := json.NewDecoder(r.Body)
+		var m geo.Map
+		err := decoder.Decode(&m)
+		if err != nil {
+			log.WithError(err).Error("error deserializing map")
+			return
+		}
+		ctx := context.WithValue(r.Context(), CtxMapKey, m)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
 }
 
 func ServeMap(w http.ResponseWriter, r *http.Request) {
-	var errors []parseError
+	out := chi.URLParam(r, "target")
 
-	values := r.URL.Query()
-	width, err := strconv.ParseInt(values.Get("width"), 10, 0)
-	if err != nil {
-		errors = append(errors, parseError{"width", err.Error()})
-	}
-	height, err := strconv.ParseInt(values.Get("height"), 10, 0)
-	if err != nil {
-		errors = append(errors, parseError{"height", err.Error()})
-	}
-	seed, err := strconv.ParseInt(values.Get("seed"), 10, 0)
-	if err != nil {
-		errors = append(errors, parseError{"seed", err.Error()})
-	}
-	min, err := strconv.ParseInt(values.Get("min"), 10, 0)
-	if err != nil {
-		errors = append(errors, parseError{"min", err.Error()})
-	}
-	max, err := strconv.ParseInt(values.Get("max"), 10, 0)
-	if err != nil {
-		errors = append(errors, parseError{"max", err.Error()})
-	}
-	out := values.Get("out")
-	if out == "" {
-		out = "png"
-	}
+	m := r.Context().Value(CtxMapKey).(geo.Map)
 
-	if len(errors) > 0 {
-		log.WithFields(log.Fields{
-			"errors": errors,
-		}).Error("parsing parameters failed")
+	width, height := m.Width, m.Height
+	seed := m.Seed
+	d := m.Domain
 
-		e := struct {
-			Errors []parseError
-		}{errors}
+	m = geo.New(int(width), int(height), int(seed), d)
 
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(400)
-		json.NewEncoder(w).Encode(e)
-		return
-	}
-
-	d := Q.Domain{
-		Max: float64(max),
-		Min: float64(min),
-	}
-
-	m := geo.New(int(width), int(height), int(seed), d)
+	mapCtx := log.WithFields(log.Fields{
+		"target": out,
+		"seed":   seed,
+		"width":  width,
+		"height": height,
+		"min":    d.Min,
+		"max":    d.Max,
+	})
 
 	switch out {
 	case "png":
@@ -76,14 +60,9 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 		render.ServeJSON(w, m)
 	case "html":
 		render.ServeHTML(w, m)
+	default:
+		render.ServePNG(w, m)
 	}
 
-	log.WithFields(log.Fields{
-		"target": out,
-		"seed":   seed,
-		"width":  width,
-		"height": height,
-		"min":    min,
-		"max":    max,
-	}).Info("serving map")
+	mapCtx.Info("serving map")
 }

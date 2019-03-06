@@ -15,6 +15,12 @@ func main() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
 
-	r.Get("/map", ServeMap)
+	r.Group(func(r chi.Router) {
+		r.Use(MapCtx)
+		r.Use(middleware.Throttle(5))
+
+		r.Get("/map/{target}", ServeMap)
+
+	})
 	log.Fatal(http.ListenAndServe(":8080", r))
 }
