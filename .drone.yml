@@ -1,21 +1,18 @@
-kind: pipeline
-name: default
+pipeline:
+  test:
+    image: golang
+    when:
+      branch:
+        - master
+        - dev
+    commands:
+      - go test -v ./...
 
-steps:
-- name: test
-  image: golang
-  commands:
-  - go test -v ./...
-  when:
-    branch:
-    - master
-    - dev
-
-- name: web
-  image: golang
-  commands:
-  - docker build .
-  - docker
-  when:
-    branch:
-    - master
+  build:
+    image: golang
+    when:
+      branch:
+        - master
+    commands:
+      - docker build .
+      - docker
