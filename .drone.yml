@@ -6,15 +6,16 @@ steps:
     image: golang
     commands:
       - go test -v ./...
-    when:
-      branch:
-        - master
-        - dev
+      when:
+        branch:
+          - master
+          - dev
 
   - name: web
     image: golang
     commands:
       - docker build .
-    when:
-      branch:
-        - master
+      - docker
+      when:
+        branch:
+          - master
