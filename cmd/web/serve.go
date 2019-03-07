@@ -7,13 +7,13 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	geo "github.com/therealfakemoot/genesis/geo"
-	render "github.com/therealfakemoot/genesis/render"
+	middleware "github.com/therealfakemoot/genesis/middleware"
 )
 
 func ServeMap(w http.ResponseWriter, r *http.Request) {
 	out := chi.URLParam(r, "target")
 
-	m := r.Context().Value(CtxMap).(geo.Map)
+	m := r.Context().Value(middleware.CtxMap).(geo.Map)
 
 	width, height := m.Width, m.Height
 	seed := m.Seed
@@ -29,18 +29,6 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 		"min":    d.Min,
 		"max":    d.Max,
 	})
-
-	switch out {
-	case "png":
-		render.ServePNG(w, m)
-	case "json":
-		w.Header().Set("Content-Type", "application/json")
-		render.ServeJSON(w, m)
-	case "html":
-		render.ServeHTML(w, m)
-	default:
-		render.ServePNG(w, m)
-	}
 
 	mapCtx.Info("serving map")
 }
