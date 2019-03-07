@@ -12,6 +12,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	geo "github.com/therealfakemoot/genesis/geo"
+	middleware "github.com/therealfakemoot/genesis/middleware"
 	Q "github.com/therealfakemoot/go-quantize"
 )
 
@@ -44,10 +45,13 @@ func GeneratePNG(m geo.Map) image.Image {
 	return img
 }
 
-func ServePNG(w http.ResponseWriter, m geo.Map) {
+func ServePNG(w http.ResponseWriter, r *http.Request) {
+	log.Info("png handler")
 	var err error
 	buffer := new(bytes.Buffer)
 
+	m := r.Context().Value(middleware.CtxMap).(geo.Map)
+	m.Points = geo.Noise(m)
 	i := GeneratePNG(m)
 
 	w.Header().Set("Content-type", "image/png")

@@ -11,7 +11,8 @@ import (
 
 var TopoTemplate = template.Must(template.New("topo.tpl").ParseFiles("static/topo.tpl"))
 
-func ServeHTML(w http.ResponseWriter, m geo.Map) {
+func ServeHTML(w http.ResponseWriter, r *http.Request) {
+	var m geo.Map
 	w.Header().Set("Content-Type", "text/html")
 	err := TopoTemplate.Execute(w, m)
 	if err != nil {

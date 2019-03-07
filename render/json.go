@@ -2,15 +2,22 @@ package render
 
 import (
 	"encoding/json"
-	"io"
 	"math"
+	"net/http"
 
 	log "github.com/sirupsen/logrus"
 
 	geo "github.com/therealfakemoot/genesis/geo"
+	middleware "github.com/therealfakemoot/genesis/middleware"
 )
 
-func ServeJSON(w io.Writer, m geo.Map) {
+func ServeJSON(w http.ResponseWriter, r *http.Request) {
+	log.Info("json handler")
+	w.Header().Set("Content-Type", "application/json")
+
+	m := r.Context().Value(middleware.CtxMap).(geo.Map)
+	m.Points = geo.Noise(m)
+
 	type mapData struct {
 		Width  int       `json:"width"`
 		Height int       `json:"height"`
