@@ -22,11 +22,10 @@ func main() {
 
 	r.Group(func(r chi.Router) {
 		r.Use(middleware.MapCtx)
-		r.Use(chi_mid.Throttle(5))
+		// r.Use(chi_mid.Throttle(5))
 
-		r.Post("/map/json", render.ServeJSON)
 		r.Post("/map/png", render.ServePNG)
-		// r.Post("/map/{target}", ServeMap)
+		r.Post("/map/json", render.ServeJSON)
 
 	})
 	log.Fatal(http.ListenAndServe(":8080", r))
