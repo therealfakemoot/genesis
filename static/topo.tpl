@@ -35,20 +35,21 @@ plot = function(terrain) {
 
 }
 
-terrain = fetch("/json", {
-	body: JSON.stringify({
-		"width": {{ $.Width }},
-		"height": {{ $.Height }},
-		"seed": {{ $.Seed }},
-		"domain": {
-		"min": {{ $.Domain.Min }},
-		"max": {{ $.Domain.Max }},
-		}
-	})
-	}).then(response => {
-		return response.json()
-	})
+fetch("/json", {
+body: JSON.stringify({
+		      "width": {{ $.Width }},
+		      "height": {{ $.Height }},
+		      "seed": {{ $.Seed }},
+		      "domain": {
+		      "min": {{ $.Domain.Min }},
+		      "max": {{ $.Domain.Max }},
+		      }
+		      })
+}).then(response => {
+	plot(response.json())
+})
 
+/*
 d3.json("/json?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={{ $.Domain.Min }}&max={{ $.Domain.Max }}&out=json", function(error, terrain) {
 	if (error) {
 		throw error;
@@ -56,6 +57,7 @@ d3.json("/json?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={
 	plot(terrain)
 
 });
+*/
 
 </script>
 </body>
