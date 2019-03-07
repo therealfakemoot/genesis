@@ -20,11 +20,7 @@ i1 = d3.interpolateHsvLong(d3.hsv(60, 1, 0.90), d3.hsv(0, 0, 0.95)),
 interpolateTerrain = function(t) { return t < 0.5 ? i0(t * 2) : i1((t - 0.5) * 2); },
 color = d3.scaleSequential(interpolateTerrain).domain([{{ $.Domain.Min }}, {{ $.Domain.Max }}]);
 
-d3.json("/map?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={{ $.Domain.Min }}&max={{ $.Domain.Max }}&out=json", function(error, terrain) {
-	if (error) {
-		throw error;
-	}
-
+plot = function(terrain) {
 	let thresholds = d3.range({{ $.Domain.Min }}, {{ $.Domain.Max }} + 1, terrain.steps)
 
 	let contours = d3.contours()
@@ -36,6 +32,29 @@ d3.json("/map?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={{
 	.enter().append("path")
 	.attr("d", d3.geoPath(d3.geoIdentity().scale(width / terrain.width)))
 	.attr("fill", function(d) { return color(d.value); });
+
+}
+
+terrain = fetch("/json", {
+	body: JSON.stringify({
+		"width": {{ $.Width }},
+		"height": {{ $.Height }},
+		"seed": {{ $.Seed }},
+		"domain": {
+		"min": {{ $.Domain.Min }},
+		"max": {{ $.Domain.Max }},
+		}
+	})
+	}).then(response => {
+		return response.json()
+	})
+
+d3.json("/json?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={{ $.Domain.Min }}&max={{ $.Domain.Max }}&out=json", function(error, terrain) {
+	if (error) {
+		throw error;
+	}
+	plot(terrain)
+
 });
 
 </script>
