@@ -20,7 +20,7 @@ func main() {
 	r.Use(chi_mid.Logger)
 	r.Use(chi_mid.Recoverer)
 
-	r.Get("/", ServeMap)
+	r.Get("/", ServeReact)
 
 	workDir, _ := os.Getwd()
 	filesDir := filepath.Join(workDir, "public/static")

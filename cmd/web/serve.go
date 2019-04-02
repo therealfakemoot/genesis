@@ -8,11 +8,9 @@ import (
 
 	"github.com/go-chi/chi"
 	log "github.com/sirupsen/logrus"
-	// geo "github.com/therealfakemoot/genesis/geo"
-	// middleware "github.com/therealfakemoot/genesis/middleware"
 )
 
-func ServeMap(w http.ResponseWriter, r *http.Request) {
+func ServeReact(w http.ResponseWriter, r *http.Request) {
 	f, err := os.Open("public/index.html")
 	if err != nil {
 		w.WriteHeader(404)
