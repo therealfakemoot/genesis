@@ -17,7 +17,7 @@ import (
 func main() {
 	r := chi.NewRouter()
 	r.Use(chi_mid.RequestID)
-	r.Use(chi_mid.Logger)
+	r.Use(middleware.ClientLogger(os.Stdout, log.DebugLevel, false))
 	r.Use(chi_mid.Recoverer)
 
 	r.Get("/", ServeReact)
