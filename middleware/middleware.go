@@ -101,9 +101,10 @@ func RequestLogger(out io.Writer, level log.Level, json bool) func(http.Handler)
 // the context.
 func MapCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		logger := r.Context().Value(CtxRequestLogger).(*log.Entry)
+		logger := r.Context().Value(CtxLogger).(*log.Logger)
 		decoder := json.NewDecoder(r.Body)
 		var m geo.Map
+		m.Log = logger
 		err := decoder.Decode(&m)
 		logger.WithFields(log.Fields{
 			"map": fmt.Sprintf("%+v", m),
