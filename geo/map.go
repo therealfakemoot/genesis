@@ -16,7 +16,7 @@ type Map struct {
 	Width  int         `json:"width"`
 	Height int         `json:"height"`
 	Points [][]float64 `json:"points"`
-	Log    *log.Logger
+	Log    log.FieldLogger
 }
 
 // Dims returns the X,Y lengths of the Map.
