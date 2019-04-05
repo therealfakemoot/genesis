@@ -17,6 +17,8 @@ import (
 func main() {
 	r := chi.NewRouter()
 	r.Use(chi_mid.RequestID)
+	requestLogs, _ := os.OpenFile("genesis.requests.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	r.Use(middleware.RequestLogger(requestLogs, log.DebugLevel, false))
 	r.Use(middleware.ClientLogger(os.Stdout, log.DebugLevel, false))
 	r.Use(chi_mid.Recoverer)
 

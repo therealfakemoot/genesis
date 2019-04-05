@@ -19,13 +19,41 @@ import (
 type CtxKey string
 
 const (
-	CtxMap    = CtxKey("map")
-	CtxLogger = CtxKey("clientLogger")
+	CtxMap           = CtxKey("map")
+	CtxRequestLogger = CtxKey("clientLogger")
+	CtxLogger        = CtxKey("logger")
 )
+
+func ClientLogger(out io.Writer, level log.Level, json bool) func(http.Handler) http.Handler {
+	var formatter log.Formatter
+
+	if json {
+		formatter = new(log.JSONFormatter)
+	} else {
+		formatter = &log.TextFormatter{
+			FullTimestamp: true,
+		}
+	}
+
+	var logger = &log.Logger{
+		Out:       out,
+		Formatter: formatter,
+		Hooks:     make(log.LevelHooks),
+		Level:     level,
+	}
+
+	return func(next http.Handler) http.Handler {
+
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := context.WithValue(r.Context(), CtxLogger, logger)
+			next.ServeHTTP(w, r.WithContext(ctx))
+		})
+	}
+}
 
 // ClientLogger configures a logrus context specifically designed to
 // emit JSON errors.
-func ClientLogger(out io.Writer, level log.Level, json bool) func(http.Handler) http.Handler {
+func RequestLogger(out io.Writer, level log.Level, json bool) func(http.Handler) http.Handler {
 	var formatter log.Formatter
 
 	if json {
@@ -54,7 +82,7 @@ func ClientLogger(out io.Writer, level log.Level, json bool) func(http.Handler) 
 				"method":     r.Method,
 			})
 
-			ctx := context.WithValue(r.Context(), CtxLogger, base)
+			ctx := context.WithValue(r.Context(), CtxRequestLogger, base)
 			start := time.Now()
 			ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
 			defer func() {
@@ -62,7 +90,7 @@ func ClientLogger(out io.Writer, level log.Level, json bool) func(http.Handler) 
 					"status":   ww.Status(),
 					"size":     ww.BytesWritten(),
 					"duration": time.Since(start),
-				}).Info(fmt.Sprintf("%s %s from %s", r.Method, r.URL.Path, r.RemoteAddr))
+				}).Debug(fmt.Sprintf("%s %s from %s", r.Method, r.URL.Path, r.RemoteAddr))
 			}()
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})
@@ -73,34 +101,20 @@ func ClientLogger(out io.Writer, level log.Level, json bool) func(http.Handler) 
 // the context.
 func MapCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		logger := r.Context().Value(CtxRequestLogger).(*log.Entry)
 		decoder := json.NewDecoder(r.Body)
 		var m geo.Map
 		err := decoder.Decode(&m)
+		logger.WithFields(log.Fields{
+			"map": fmt.Sprintf("%+v", m),
+		}).Debug("decoded map")
 		if err != nil {
 			w.WriteHeader(400)
-			log.WithError(err).Error("error deserializing map")
+			logger.WithError(err).Error("error deserializing map")
 			return
 		}
 
-		/*
-			valid := func(v bool) string {
-				if v {
-					return "invalid"
-				}
-				return "valid"
-			}
-
-				if (m.Width <= 0 || m.Height <= 0) || m.Domain.Min > m.Domain.Max {
-					w.WriteHeader(400)
-					log.WithFields(log.Fields{
-						"width":  valid(m.Width <= 0),
-						"height": valid(m.Height <= 0),
-						"domain": valid(m.Domain.Min > m.Domain.Max),
-					}).Error("invalid map")
-					return
-
-				}
-		*/
+		// TODO: Validate the map parameters
 
 		ctx := context.WithValue(r.Context(), CtxMap, m)
 		next.ServeHTTP(w, r.WithContext(ctx))
