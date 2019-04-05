@@ -1,7 +1,7 @@
 package geo
 
 import (
-	// log "github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 
 	Q "github.com/therealfakemoot/go-quantize"
 )
@@ -16,6 +16,7 @@ type Map struct {
 	Width  int         `json:"width"`
 	Height int         `json:"height"`
 	Points [][]float64 `json:"points"`
+	Log    *log.Logger
 }
 
 // Dims returns the X,Y lengths of the Map.
@@ -70,7 +71,7 @@ func New(x, y, seed int, d Q.Domain) (m Map) {
 	m.Height = y
 	m.Domain = d
 
-	m.Points = Noise(m)
+	m.Noise()
 
 	return m
 }

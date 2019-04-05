@@ -16,15 +16,16 @@ var (
 	}
 )
 
-func Noise(m Map) (points [][]float64) {
-	return NoiseComplex(m, NoiseDefaults)
+func (m *Map) Noise() {
+	m.NoiseComplex(NoiseDefaults)
 }
 
-func NoiseComplex(m Map, no NoiseOpts) (points [][]float64) {
+func (m *Map) NoiseComplex(no NoiseOpts) {
 	// This is important. Adding the noise values together means the input domain grows.
 	input := Q.Domain{Min: -3, Max: 3}
 	n := noise.New(int64(m.Seed))
 
+	var points [][]float64
 	x, y := m.Width, m.Height
 	alphaFine, alphaMid, alphaCoarse := no.Alpha[0], no.Alpha[1], no.Alpha[2]
 
@@ -41,5 +42,5 @@ func NoiseComplex(m Map, no NoiseOpts) (points [][]float64) {
 
 		points = append(points, quantized)
 	}
-	return points
+	m.Points = points
 }

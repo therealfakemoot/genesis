@@ -16,7 +16,7 @@ func ServeJSON(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	m := r.Context().Value(middleware.CtxMap).(geo.Map)
-	m.Points = geo.Noise(m)
+	m.Noise()
 
 	type mapData struct {
 		Width  int       `json:"width"`

@@ -53,7 +53,7 @@ func ServePNG(w http.ResponseWriter, r *http.Request) {
 
 	m := r.Context().Value(middleware.CtxMap).(geo.Map)
 	logger.Info("generating noise")
-	m.Points = geo.Noise(m)
+	m.Noise()
 	logger.Info("rendering PNG")
 	i := GeneratePNG(m, logger)
 
