@@ -46,13 +46,15 @@ func GeneratePNG(m geo.Map, logger *log.Entry) image.Image {
 }
 
 func ServePNG(w http.ResponseWriter, r *http.Request) {
-	logger := r.Context().Value(middleware.CtxLogger).(*log.Entry)
-	logger.Info("png handler")
+	l := r.Context().Value(middleware.CtxLogger).(*log.Logger)
+	logger := l.WithField("handler", "ServePng")
 	var err error
 	buffer := new(bytes.Buffer)
 
 	m := r.Context().Value(middleware.CtxMap).(geo.Map)
+	logger.Info("generating noise")
 	m.Points = geo.Noise(m)
+	logger.Info("rendering PNG")
 	i := GeneratePNG(m, logger)
 
 	w.Header().Set("Content-type", "image/png")
