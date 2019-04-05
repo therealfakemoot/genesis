@@ -104,7 +104,7 @@ func MapCtx(next http.Handler) http.Handler {
 		logger := r.Context().Value(CtxLogger).(*log.Logger)
 		decoder := json.NewDecoder(r.Body)
 		var m geo.Map
-		m.Log = logger
+		m.Log = logger.WithField("request-id", middleware.GetReqID(r.Context()))
 		err := decoder.Decode(&m)
 		logger.WithFields(log.Fields{
 			"map": fmt.Sprintf("%+v", m),
