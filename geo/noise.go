@@ -2,6 +2,7 @@ package geo
 
 import (
 	noise "github.com/ojrac/opensimplex-go"
+	log "github.com/sirupsen/logrus"
 
 	Q "github.com/therealfakemoot/go-quantize"
 )
@@ -23,11 +24,24 @@ func (m *Map) Noise() {
 func (m *Map) NoiseComplex(no NoiseOpts) {
 	// This is important. Adding the noise values together means the input domain grows.
 	input := Q.Domain{Min: -3, Max: 3}
+	m.Log.Debug("entering NoiseComplex")
 	n := noise.New(int64(m.Seed))
 
 	var points [][]float64
 	x, y := m.Width, m.Height
+
+	m.Log.WithFields(log.Fields{
+		"seed":   m.Seed,
+		"width":  x,
+		"height": y,
+	}).Debug("preparing map")
+
 	alphaFine, alphaMid, alphaCoarse := no.Alpha[0], no.Alpha[1], no.Alpha[2]
+	m.Log.WithFields(log.Fields{
+		"fine":   alphaFine,
+		"mid":    alphaMid,
+		"coarse": alphaCoarse,
+	}).Debug("alpha coefficients loaded")
 
 	for i := 0; i < y; i++ {
 		row := make([]float64, x)
