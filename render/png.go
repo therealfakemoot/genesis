@@ -59,7 +59,7 @@ func ServePNG(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-type", "image/png")
 
-	w.Header().Set("Content-Disposition", `inline;filename="butts"`)
+	w.Header().Set("Content-Disposition", `inline;filename="map.png"`)
 	err = png.Encode(buffer, i)
 	if err != nil {
 		logger.WithError(err).Error("image encoding failure")
