@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	geo "github.com/therealfakemoot/genesis/geo"
+	Q "github.com/therealfakemoot/go-quantize"
 )
 
 type CtxKey string
@@ -29,7 +30,16 @@ func MapCtx(next http.Handler) http.Handler {
 		var m geo.Map
 		err := decoder.Decode(&m)
 		if err != nil {
-			log.WithError(err).Error("error deserializing map")
+			// log.WithError(err).Error("error deserializing map")
+			m.Width = 1000
+			m.Height = 1000
+			m.Seed = 123456
+			m.Domain = Q.Domain{
+				Min: -1000,
+				Max: 1000,
+			}
+			ctx := context.WithValue(r.Context(), CtxMap, m)
+			next.ServeHTTP(w, r.WithContext(ctx))
 			return
 		}
 
