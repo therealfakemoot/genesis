@@ -1,8 +1,8 @@
 package main
 
 import (
+	"flag"
 	"net/http"
-	// "flag"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
@@ -10,6 +10,13 @@ import (
 )
 
 func main() {
+	var (
+		port string
+	)
+
+	flag.StringVar(&port, "port", "8080", "server port to bind to")
+	flag.Parse()
+
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
@@ -22,5 +29,6 @@ func main() {
 		r.Get("/map/{target}", ServeMap)
 
 	})
-	log.Fatal(http.ListenAndServe(":8080", r))
+
+	log.Fatal(http.ListenAndServe(":"+port, r))
 }
