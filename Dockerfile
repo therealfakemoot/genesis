@@ -16,5 +16,7 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 COPY --from=builder /opt/genesis/genesis /opt/genesis/genesis
 COPY --from=builder /opt/genesis/static /opt/genesis/static
 
+WORKDIR /opt/genesis
+
 EXPOSE 8080
 ENTRYPOINT ["/opt/genesis/genesis"]
