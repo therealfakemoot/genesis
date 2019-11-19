@@ -1,11 +1,20 @@
-FROM golang:1.12 as build
+FROM golang:1.12-alpine as builder
+RUN apk update && apk add --no-cache git ca-certificates && update-ca-certificates
+
 WORKDIR /opt/genesis
+
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+
 COPY . .
 RUN CGO_ENABLED=0 go build -o genesis cmd/web/*
 
 FROM alpine:latest
-WORKDIR /opt/genesis
-COPY --from=build /opt/genesis/genesis /opt/genesis/bin/genesis
-COPY --from=build /opt/genesis/static /opt/genesis/static
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+COPY --from=builder /opt/genesis/genesis /opt/genesis/genesis
+COPY --from=builder /opt/genesis/static /opt/genesis/static
+
 EXPOSE 8080
-ENTRYPOINT ["/opt/genesis/bin/genesis"]
+# ENTRYPOINT ["/opt/genesis/genesis"]
