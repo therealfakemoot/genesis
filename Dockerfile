@@ -17,4 +17,4 @@ COPY --from=builder /opt/genesis/genesis /opt/genesis/genesis
 COPY --from=builder /opt/genesis/static /opt/genesis/static
 
 EXPOSE 8080
-# ENTRYPOINT ["/opt/genesis/genesis"]
+ENTRYPOINT ["/opt/genesis/genesis"]
