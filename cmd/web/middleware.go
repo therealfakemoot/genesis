@@ -2,8 +2,8 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
 
@@ -26,22 +26,37 @@ func ClientLogger(next http.Handler) http.Handler {
 
 func MapCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		decoder := json.NewDecoder(r.Body)
 		var m geo.Map
-		err := decoder.Decode(&m)
-		if err != nil {
-			// log.WithError(err).Error("error deserializing map")
-			m.Width = 1000
-			m.Height = 1000
-			m.Seed = 123456
-			m.Domain = Q.Domain{
-				Min: -1000,
-				Max: 1000,
+
+		parseInt := func(s string) int {
+			i, err := strconv.ParseInt(s, 10, 64)
+			if err != nil {
+				return 0
 			}
-			ctx := context.WithValue(r.Context(), CtxMap, m)
-			next.ServeHTTP(w, r.WithContext(ctx))
-			return
+			return int(i)
 		}
+
+		seed := parseInt(r.FormValue("seed"))
+		width := parseInt(r.FormValue("width"))
+		height := parseInt(r.FormValue("height"))
+		min := parseInt(r.FormValue("min"))
+		max := parseInt(r.FormValue("max"))
+
+		m.Seed = seed
+		m.Width = width
+		m.Height = height
+		m.Domain = Q.Domain{
+			Min: float64(min),
+			Max: float64(max),
+		}
+
+		log.WithFields(log.Fields{
+			"seed":   seed,
+			"width":  width,
+			"height": height,
+			"min":    min,
+			"max":    max,
+		}).Info("raw url param values")
 
 		valid := func(v bool) string {
 			if v {
