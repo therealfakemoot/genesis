@@ -15,8 +15,8 @@ var svg = d3.select("svg"),
 width = +svg.attr("width"),
 height = +svg.attr("height");
 
-var i0 = d3.interpolateHsvLong(d3.hsv(120, 1, 0.65), d3.hsv(60, 1, 0.90)),
-i1 = d3.interpolateHsvLong(d3.hsv(60, 1, 0.90), d3.hsv(0, 0, 0.95)),
+var i0 = d3.interpolateHsvLong(d3.hsv(0, 0, 0.0), d3.hsv(0, 0, 0.0)),
+i1 = d3.interpolateHsvLong(d3.hsv(0, 0, 100.0), d3.hsv(0, 0, 100.0)),
 interpolateTerrain = function(t) { return t < 0.5 ? i0(t * 2) : i1((t - 0.5) * 2); },
 color = d3.scaleSequential(interpolateTerrain).domain([{{ $.Domain.Min }}, {{ $.Domain.Max }}]);
 
