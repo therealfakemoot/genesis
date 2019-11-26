@@ -20,7 +20,7 @@ i1 = d3.interpolateHsvLong(d3.hsv(0, 0, 100.0), d3.hsv(0, 0, 100.0)),
 interpolateTerrain = function(t) { return t < 0.5 ? i0(t * 2) : i1((t - 0.5) * 2); },
 color = d3.scaleSequential(interpolateTerrain).domain([{{ $.Domain.Min }}, {{ $.Domain.Max }}]);
 
-d3.json("/map?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={{ $.Domain.Min }}&max={{ $.Domain.Max }}&out=json", function(error, terrain) {
+d3.json("/map/json?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&min={{ $.Domain.Min }}&max={{ $.Domain.Max }}", function(error, terrain) {
 	if (error) {
 		throw error;
 	}
