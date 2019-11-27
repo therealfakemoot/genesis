@@ -5,7 +5,7 @@ body {
 }
 </style>
 <body>
-<svg width="{{ $.Width }}" height="{{ $.Height }}" stroke="#fff" stroke-width="0.5"></svg>
+<svg width="{{ $.Width }}" height="{{ $.Height }}" stroke="#fff" stroke-width="0.2"></svg>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script src="https://d3js.org/d3-hsv.v0.1.min.js"></script>
 <script src="https://d3js.org/d3-contour.v1.min.js"></script>
