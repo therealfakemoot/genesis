@@ -10,6 +10,7 @@ import (
 	geo "github.com/therealfakemoot/genesis/geo"
 )
 
+// This function flattens the points into a single array, which d3 uses for rendering.
 func ServeJSON(w io.Writer, m geo.Map) {
 	type mapData struct {
 		Width  int       `json:"width"`

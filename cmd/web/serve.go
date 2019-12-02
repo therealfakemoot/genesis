@@ -36,8 +36,10 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 	case "json":
 		w.Header().Set("Content-Type", "application/json")
 		render.ServeJSON(w, m)
-	case "html":
-		render.ServeHTML(w, m)
+	case "d3":
+		render.D3(w, m)
+	case "plotly":
+		render.Plotly(w, m)
 	default:
 		render.ServePNG(w, m)
 	}
