@@ -52,7 +52,7 @@ body {
 
 <div class="pure-g">
 	<h3>Topographical Terrain Map</h3>
-	<svg class = "pure-u-1" width="{{ $.Width }}" height="{{ $.Height }}" stroke="#fff" stroke-width="0.5"></svg>
+	<svg class="pure-u-1" width="{{ $.Width }}" height="{{ $.Height }}" stroke="#fff" stroke-width="0.5"></svg>
 </div>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
