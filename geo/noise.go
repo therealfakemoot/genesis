@@ -20,6 +20,8 @@ func Noise(m Map) (points [][]float64) {
 	return NoiseComplex(m, NoiseDefaults)
 }
 
+// func NoiseLayer() [][]float64 {}
+
 func NoiseComplex(m Map, no NoiseOpts) (points [][]float64) {
 	// This is important. Adding the noise values together means the input domain grows.
 	input := Q.Domain{Min: -3, Max: 3}
@@ -31,11 +33,11 @@ func NoiseComplex(m Map, no NoiseOpts) (points [][]float64) {
 	for i := 0; i < y; i++ {
 		row := make([]float64, x)
 		for j := 0; j < x; j++ {
-			v := n.Eval2(float64(j)*alphaFine, float64(i)*alphaFine) +
-				n.Eval2(float64(j)*alphaMid, float64(i)*alphaMid) +
-				(0.25 * n.Eval2(float64(j)*alphaCoarse, float64(i)*alphaCoarse))
+			fine := n.Eval2(float64(j)*alphaFine, float64(i)*alphaFine)
+			mid := n.Eval2(float64(j)*alphaMid, float64(i)*alphaMid)
+			coarse := n.Eval2(float64(j)*alphaCoarse, float64(i)*alphaCoarse)
 
-			row[j] = v
+			row[j] = fine + mid + coarse
 		}
 		quantized := Q.QuantizeAll(row, input, m.Domain)
 
