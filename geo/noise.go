@@ -6,7 +6,14 @@ import (
 	Q "github.com/therealfakemoot/go-quantize"
 )
 
+// NoiseOpts describes the tunable parameters for height map generation.
 type NoiseOpts struct {
+	// Alpha, named after the fine-structure constant, is a coefficient that scales the x/y
+	// coordinates of sampled noise. Smaller Alpha values mean that samples are closer together
+	// in value, resulting in smoother gradients.
+	//
+	// The default generation process uses three layers. Providing less than 3 will cause a
+	// panic ( index out of range ).
 	Alpha []float64 `json:"alpha"`
 }
 
