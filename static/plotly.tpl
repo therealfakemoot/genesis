@@ -6,19 +6,6 @@
 <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 
-<style>
-body {
-	background: #4a306d;
-	color: #000000;
-}
-
-.pure-form legend {
-	color: #000000;
-	border-bottom: .25em solid #B796AC;
-}
-
-</style>
-
 <body>
 
 <div class="pure-g">
