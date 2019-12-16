@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/BurntSushi/toml"
 	"github.com/go-chi/chi"
 	log "github.com/sirupsen/logrus"
 
@@ -19,7 +20,13 @@ func ServeMap(w http.ResponseWriter, r *http.Request) {
 	seed := m.Seed
 	d := m.Domain
 
-	m = geo.New(int(width), int(height), int(seed), d)
+	var noiseOpts geo.NoiseOpts
+	_, err := toml.DecodeFile("noiseOpts.toml", &noiseOpts)
+	if err != nil {
+		log.WithError(err).Error("unable to open noiseOpts config file")
+	}
+
+	m = geo.New(int(width), int(height), int(seed), d, noiseOpts)
 
 	mapCtx := log.WithFields(log.Fields{
 		"target": out,

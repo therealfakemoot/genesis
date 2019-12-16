@@ -44,14 +44,14 @@ func (m Map) Max() float64 {
 	return m.Domain.Max
 }
 
-func New(x, y, seed int, d Q.Domain) (m Map) {
+func New(x, y, seed int, d Q.Domain, no NoiseOpts) (m Map) {
 	m.Seed = seed
 	m.Points = make([][]float64, y)
 	m.Width = x
 	m.Height = y
 	m.Domain = d
 
-	m.Points = Noise(m)
+	m.Points = NoiseComplex(m, no)
 
 	return m
 }

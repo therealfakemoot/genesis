@@ -1,6 +1,7 @@
 module github.com/therealfakemoot/genesis
 
 require (
+	github.com/BurntSushi/toml v0.3.1
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/ojrac/opensimplex-go v1.0.1
 	github.com/sirupsen/logrus v1.3.0
