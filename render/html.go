@@ -10,8 +10,8 @@ import (
 )
 
 var RootTemplate = template.New("root")
-var D3Template = template.Must(RootTemplate.ParseFiles("static/d3.tpl"))
-var PlotlyTemplate = template.Must(RootTemplate.ParseFiles("static/plotly.tpl"))
+var _ = template.Must(RootTemplate.ParseGlob("static/*.tpl"))
+var _ = template.Must(RootTemplate.ParseGlob("static/partial/*.tpl"))
 
 func Plotly(w http.ResponseWriter, m geo.Map) {
 	w.Header().Set("Content-Type", "text/html")

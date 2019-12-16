@@ -1,62 +1,18 @@
 {{ define "d3" }}
-<!DOCTYPE html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-oAOxQR6DkCoMliIh8yFnu25d7Eq/PHS21PClpwjOTeU2jRSq11vu66rf90/cZr47" crossorigin="anonymous">
-</head>
 
-<style>
-body {
-	background: #4a306d;
-	color: #000000;
-}
-
-.pure-form legend {
-	color: #000000;
-	border-bottom: .25em solid #B796AC;
-}
-
-</style>
+{{ template "header" }}
 
 <body>
 
-<div class="pure-g">
-	<form class="pure-form pure-u-1-3 pure-form-aligned">
-		<fieldset class="pure-group">
-			<legend>Map Colors</legend>
-			<label for="colorScheme">
-				<select name="colorScheme" size="4">
-					<option value="Plasma" selected>Plasma</option>
-					<option value="Turbo">Turbo</option>
-					<option value="Viridis">Viridis</option>
-					<option value="Inferno">Inferno</option>
-					<option value="Magma">Magma</option>
-					<option value="Warm">Warm</option>
-					<option value="Cold">Cold</option>
-				</select>
-				Color Scheme
-			</label>
-		</fieldset>
-	</form>
 
-	<form class="pure-form pure-u-1-3 pure-form-aligned">
-		<fieldset class="pure-group">
-			<legend>Map Parameters</legend>
-			<label for="width">
-				<input class="pure-input-rounded" type="number" name="width" value="1000"/>
-				Map Width
-			</label>
-			<label for="height">
-				<input class="pure-input-rounded" type="number" name="height" value="1000"/>
-				Map Height
-			</label>
-		</fieldset>
-	</form>
-</div>
-
+<div><h3>Topographical Terrain Map</h3></div>
 <div class="pure-g">
-	<h3>Topographical Terrain Map</h3>
-	<svg class="pure-u-1" width="{{ $.Width }}" height="{{ $.Height }}" stroke="#fff" stroke-width="0.5"></svg>
+	<div class="pure-u-1-2">
+		<svg width="{{ $.Width }}" height="{{ $.Height }}" stroke="#fff" stroke-width="0.5"></svg>
+	</div>
+	<div class="pure-u-1-2">
+		{{ template "mapControls" "pure-u-1-2"}}
+	</div>
 </div>
 
 <script src="https://d3js.org/d3.v4.min.js"></script>
@@ -92,5 +48,8 @@ d3.json("/map/json?width={{ $.Width }}&height={{ $.Height }}&seed={{ $.Seed }}&m
 });
 
 </script>
+
+{{ template "footer" }}
+
 </body>
 {{ end }}
