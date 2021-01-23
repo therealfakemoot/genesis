@@ -70,7 +70,7 @@ func New(x, y, seed int, d Q.Domain) (m Map) {
 	m.Width = x
 	m.Height = y
 	m.Domain = d
-
+	m.Log = log.New()
 	m.Noise()
 
 	return m
