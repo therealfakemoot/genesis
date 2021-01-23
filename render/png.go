@@ -16,7 +16,7 @@ import (
 	Q "github.com/therealfakemoot/go-quantize"
 )
 
-func matchColor(point float64, d Q.Domain, logger *log.Entry) (c color.Color) {
+func matchColor(point float64, d Q.Domain, logger log.FieldLogger) (c color.Color) {
 	colorSpace := Q.Domain{
 		Min: 0,
 		Max: 255,
@@ -31,13 +31,13 @@ func matchColor(point float64, d Q.Domain, logger *log.Entry) (c color.Color) {
 	return color.NRGBA{normalized, normalized, normalized, 255}
 }
 
-func GeneratePNG(m geo.Map, logger *log.Entry) image.Image {
+func GeneratePNG(m geo.Map) image.Image {
 	img := image.NewNRGBA(image.Rect(0, 0, m.Width, m.Height))
 
 	for y := 0; y < m.Height; y++ {
 		for x := 0; x < m.Width; x++ {
 			point := m.Points[x][y]
-			c := matchColor(point, m.Domain, logger)
+			c := matchColor(point, m.Domain, m.Log)
 			img.Set(x, y, c)
 		}
 	}
