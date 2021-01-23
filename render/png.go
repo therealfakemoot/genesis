@@ -55,7 +55,7 @@ func ServePNG(w http.ResponseWriter, r *http.Request) {
 	logger.Info("generating noise")
 	m.Noise()
 	logger.Info("rendering PNG")
-	i := GeneratePNG(m, logger)
+	i := GeneratePNG(m)
 
 	w.Header().Set("Content-type", "image/png")
 
