@@ -15,7 +15,7 @@ type Map struct {
 	Domain Q.Domain    `json:"domain"`
 	Width  int         `json:"width"`
 	Height int         `json:"height"`
-	Points [][]float64 `json:"points"`
+	Points [][]float64 `json:"points",ikea:"compress:9"`
 	Log    log.FieldLogger
 }
 
