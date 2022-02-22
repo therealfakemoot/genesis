@@ -7,11 +7,11 @@
 
 <div><h3>Topographical Terrain Map</h3></div>
 <div class="pure-g">
-	<div class="pure-u-1-2">
+	{{ template "mapControls" }}
+</div>
+<div class="pure-g">
+	<div class="pure-u-1">
 		<svg width="{{ $.Width }}" height="{{ $.Height }}" stroke="#fff" stroke-width="0.5"></svg>
-	</div>
-	<div class="pure-u-1-2">
-		{{ template "mapControls" "pure-u-1-2"}}
 	</div>
 </div>
 

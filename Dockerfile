@@ -18,5 +18,5 @@ COPY --from=builder /opt/genesis/static /opt/genesis/static
 
 WORKDIR /opt/genesis
 
-EXPOSE 8080
+EXPOSE 8888
 ENTRYPOINT ["/opt/genesis/genesis"]

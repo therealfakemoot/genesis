@@ -1,8 +1,10 @@
 {{ define "colorPicker" }}
-<form class="pure-form pure-form-aligned {{ . }}">
+<div class="{{ . }}">
+<form class="pure-form pure-form-aligned">
 	<fieldset class="pure-group">
 		<legend>Map Colors</legend>
-		<label for="colorScheme">
+		<div class="pure-control-group">
+			<label for="colorScheme">Color Scheme</label>
 			<select name="colorScheme" size="4">
 				<option value="Plasma" selected>Plasma</option>
 				<option value="Turbo">Turbo</option>
@@ -12,8 +14,8 @@
 				<option value="Warm">Warm</option>
 				<option value="Cold">Cold</option>
 			</select>
-			Color Scheme
-		</label>
+		</div>
 	</fieldset>
 </form>
+</div>
 {{ end }}

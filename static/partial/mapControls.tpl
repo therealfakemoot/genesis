@@ -1,6 +1,4 @@
 {{ define "mapControls" }}
-<div class="pure-g {{ . }}">
-	{{ template "colorPicker" "" }}
-	{{ template "mapParams" "" }}
-</div>
+{{ template "colorPicker" "pure-g-1-3" }}
+{{ template "mapParams" "pure-g-1-3" }}
 {{ end }}

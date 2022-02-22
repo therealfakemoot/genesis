@@ -14,7 +14,7 @@ func main() {
 		port string
 	)
 
-	flag.StringVar(&port, "port", "8080", "server port to bind to")
+	flag.StringVar(&port, "port", "8888", "server port to bind to")
 	flag.Parse()
 
 	r := chi.NewRouter()
