@@ -2,6 +2,8 @@ github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
 github.com/go-chi/chi v4.0.2+incompatible h1:maB6vn6FqCxrpz4FqWdh4+lwpyZIQS7YEAUcHlgXVRs=
 github.com/go-chi/chi v4.0.2+incompatible/go.mod h1:eB3wogJHnLi3x/kFX2A+IbTBlXxmMeXJVKy9tTv1XzQ=
+github.com/ikkerens/ikeapack v1.5.1 h1:1fW1eazVsY4/ZTvP14JVxzllfeeRGMBrFEbkhJpxRD0=
+github.com/ikkerens/ikeapack v1.5.1/go.mod h1:LeFYIQ/VyvJZrwLoDZ46NJTiUrjjlo/4T0bRmxUS20I=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1 h1:mweAR1A6xJ3oS2pRaGiHgQ4OO8tzTaLawm8vnODuwDk=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
 github.com/ojrac/opensimplex-go v1.0.1 h1:XslvpLP6XqQSATUtsOnGBYtFPw7FQ6h6y0ihjVeOLHo=

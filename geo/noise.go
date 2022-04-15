@@ -43,9 +43,9 @@ func (m *Map) NoiseComplex(no NoiseOpts) {
 		"coarse": alphaCoarse,
 	}).Debug("alpha coefficients loaded")
 
-	for i := 0; i < y; i++ {
+	for i := int64(0); i < y; i++ {
 		row := make([]float64, x)
-		for j := 0; j < x; j++ {
+		for j := int64(0); j < x; j++ {
 			v := n.Eval2(float64(j)*alphaFine, float64(i)*alphaFine) +
 				n.Eval2(float64(j)*alphaMid, float64(i)*alphaMid) +
 				(0.25 * n.Eval2(float64(j)*alphaCoarse, float64(i)*alphaCoarse))

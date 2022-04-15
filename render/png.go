@@ -32,10 +32,12 @@ func matchColor(point float64, d Q.Domain, logger log.FieldLogger) (c color.Colo
 }
 
 func GeneratePNG(m geo.Map) image.Image {
-	img := image.NewNRGBA(image.Rect(0, 0, m.Width, m.Height))
+	img := image.NewNRGBA(image.Rect(0, 0, int(m.Width), int(m.Height)))
 
-	for y := 0; y < m.Height; y++ {
-		for x := 0; x < m.Width; x++ {
+	mHeight := int(m.Height)
+	mWidth := int(m.Width)
+	for y := 0; y < mHeight; y++ {
+		for x := 0; x < mWidth; x++ {
 			point := m.Points[x][y]
 			c := matchColor(point, m.Domain, m.Log)
 			img.Set(x, y, c)

@@ -19,9 +19,9 @@ func ServeJSON(w http.ResponseWriter, r *http.Request) {
 	m.Noise()
 
 	type mapData struct {
-		Width  int       `json:"width"`
-		Height int       `json:"height"`
-		Seed   int       `json:"seed"`
+		Width  int64     `json:"width"`
+		Height int64     `json:"height"`
+		Seed   int64       `json:"seed"`
 		Steps  float64   `json:"steps"`
 		Min    float64   `json:"min"`
 		Max    float64   `json:"max"`
@@ -33,8 +33,8 @@ func ServeJSON(w http.ResponseWriter, r *http.Request) {
 	md.Seed = m.Seed
 	md.Steps = (math.Abs(m.Domain.Min) + math.Abs(m.Domain.Min)) / 35
 
-	for i := 0; i < m.Height; i++ {
-		for j := 0; j < m.Width; j++ {
+	for i := int64(0); i < m.Height; i++ {
+		for j := int64(0); j < m.Width; j++ {
 			v := m.Points[i][j]
 			if v < 0.0 {
 				v = 0.0

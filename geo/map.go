@@ -11,18 +11,18 @@ import (
 // A Map is the core construct for Genesis. All other values,
 // can be derived from or must be saved to the context of a Map.
 type Map struct {
-	Seed   int         `json:"seed"`
-	Domain Q.Domain    `json:"domain"`
-	Width  int         `json:"width"`
-	Height int         `json:"height"`
-	Points [][]float64 `json:"points",ikea:"compress:9"`
-	Log    log.FieldLogger
+	Seed   int64           `json:"seed"`
+	Domain Q.Domain        `json:"domain"`
+	Width  int64           `json:"width"`
+	Height int64           `json:"height"`
+	Points [][]float64     `json:"points", ikea:"compress:9"`
+	Log    log.FieldLogger `ikea:"-"`
 }
 
 // Dims returns the X,Y lengths of the Map.
 //
 // For compliance with the gonum/plot/plotter.GridXYZ interface.
-func (m Map) Dims() (int, int) {
+func (m Map) Dims() (int64, int64) {
 	return m.Width, m.Height
 }
 
@@ -32,7 +32,7 @@ func (m Map) Z(c, r int) float64 {
 }
 
 // X returns the X coordinate of column c.
-func (m Map) X(c int) float64 {
+func (m Map) X(c int64) float64 {
 	// The interface demands this. I think it's only useful
 	// if your underlying data structure is sparse.
 	if c > m.Width {
@@ -42,7 +42,7 @@ func (m Map) X(c int) float64 {
 }
 
 // Y returns the Y coordinate of row r.
-func (m Map) Y(r int) float64 {
+func (m Map) Y(r int64) float64 {
 	// The interface demands this. I think it's only useful
 	// if your underlying data structure is sparse.
 	if r > m.Height {
@@ -64,7 +64,7 @@ func (m Map) Max() float64 {
 }
 
 // New returns a new Map, pre-populated with terrain data.
-func New(x, y, seed int, d Q.Domain) (m Map) {
+func New(x, y int64, seed int64, d Q.Domain) (m Map) {
 	m.Seed = seed
 	m.Points = make([][]float64, y)
 	m.Width = x
